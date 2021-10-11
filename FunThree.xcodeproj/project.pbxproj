@@ -13,6 +13,7 @@
 		3164BBB727138F49004B531C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3164BBB527138F49004B531C /* Main.storyboard */; };
 		3164BBB927138F4A004B531C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3164BBB827138F4A004B531C /* Assets.xcassets */; };
 		3164BBBC27138F4A004B531C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3164BBBA27138F4A004B531C /* LaunchScreen.storyboard */; };
+		3164BBC42713DD89004B531C /* MotionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164BBC32713DD89004B531C /* MotionModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		3164BBB827138F4A004B531C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3164BBBB27138F4A004B531C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3164BBBD27138F4A004B531C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3164BBC32713DD89004B531C /* MotionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 				3164BBB127138F49004B531C /* SceneDelegate.swift */,
 				3164BBB327138F49004B531C /* ViewController.swift */,
 				3164BBB527138F49004B531C /* Main.storyboard */,
+				3164BBC32713DD89004B531C /* MotionModel.swift */,
 				3164BBB827138F4A004B531C /* Assets.xcassets */,
 				3164BBBA27138F4A004B531C /* LaunchScreen.storyboard */,
 				3164BBBD27138F4A004B531C /* Info.plist */,
@@ -141,6 +144,7 @@
 				3164BBB427138F49004B531C /* ViewController.swift in Sources */,
 				3164BBB027138F49004B531C /* AppDelegate.swift in Sources */,
 				3164BBB227138F49004B531C /* SceneDelegate.swift in Sources */,
+				3164BBC42713DD89004B531C /* MotionModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
