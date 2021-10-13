@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		314967BE2717403300822065 /* GoalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314967BD2717403300822065 /* GoalViewController.swift */; };
 		3164BBB027138F49004B531C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164BBAF27138F49004B531C /* AppDelegate.swift */; };
 		3164BBB227138F49004B531C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164BBB127138F49004B531C /* SceneDelegate.swift */; };
 		3164BBB427138F49004B531C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164BBB327138F49004B531C /* ViewController.swift */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		314967BD2717403300822065 /* GoalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalViewController.swift; sourceTree = "<group>"; };
 		3164BBAC27138F49004B531C /* FunThree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FunThree.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3164BBAF27138F49004B531C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3164BBB127138F49004B531C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -61,6 +63,7 @@
 				3164BBAF27138F49004B531C /* AppDelegate.swift */,
 				3164BBB127138F49004B531C /* SceneDelegate.swift */,
 				3164BBB327138F49004B531C /* ViewController.swift */,
+				314967BD2717403300822065 /* GoalViewController.swift */,
 				3164BBB527138F49004B531C /* Main.storyboard */,
 				3164BBC32713DD89004B531C /* MotionModel.swift */,
 				3164BBB827138F4A004B531C /* Assets.xcassets */,
@@ -142,6 +145,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3164BBB427138F49004B531C /* ViewController.swift in Sources */,
+				314967BE2717403300822065 /* GoalViewController.swift in Sources */,
 				3164BBB027138F49004B531C /* AppDelegate.swift in Sources */,
 				3164BBB227138F49004B531C /* SceneDelegate.swift in Sources */,
 				3164BBC42713DD89004B531C /* MotionModel.swift in Sources */,

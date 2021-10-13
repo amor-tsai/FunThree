@@ -12,13 +12,13 @@ import CoreMotion
 
 //extend the Date so I can easily get yesterday, tomorow and midnight
 extension Date {
-    var dayBefore: Date {
+    var dayBefore: Date {//Yesterday
         return Calendar.current.date(byAdding: .day, value: -1, to: midnight)!
     }
-    var dayAfter: Date {
+    var dayAfter: Date {//tomorow
         return Calendar.current.date(byAdding: .day, value: 1, to: midnight)!
     }
-    var midnight: Date {
+    var midnight: Date {//midnight
         return Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: self)!
     }
 }
@@ -30,15 +30,40 @@ class MotionModel {
     let pedometer = CMPedometer()
     let customQueue = OperationQueue()
     
+    let DAILY_GOAL = "DailyGoal" // key to store daily goal
+    
     private var todaySteps:NSNumber
     private var yesterdaySteps:NSNumber
+    private var motionDesc : String
+    private var dailyGoal : Int
     
-    
-    private var activity:CMMotionActivity?
+    private static let singleInstance: MotionModel = {
+       let shared = MotionModel()
+        return shared
+    }() // return single instance
     
     init() {
         self.yesterdaySteps = 0
         self.todaySteps = 0
+        self.motionDesc = ""
+        self.dailyGoal = UserDefaults.standard.integer(forKey: DAILY_GOAL)// if daily goal does not set, 0 will be assigned.
+    }
+    
+    class func sharedInstance() -> MotionModel {
+        return singleInstance
+    }
+    
+    
+    // set daily goal and store the value
+    func dailyGoalSet(dailyGoal:String) {
+        
+        self.dailyGoal = Int(dailyGoal) ?? 0
+        UserDefaults.standard.set(self.dailyGoal, forKey: DAILY_GOAL)
+    }
+    
+    // get daily goal
+    func getDailyGoal() -> Int {
+        return self.dailyGoal
     }
     
     //start activity updates
@@ -47,8 +72,33 @@ class MotionModel {
             self.activityManager.startActivityUpdates(to: customQueue) {
             (activity:CMMotionActivity?) -> Void in
                 if let unwrappedActivity = activity {
-                    self.activity = unwrappedActivity
-//                    print(self.activity?.description)
+                    self.motionDesc = ""
+                    print(unwrappedActivity.description)
+                    if unwrappedActivity.walking {
+                        self.motionDesc += " walking, conf: \(unwrappedActivity.confidence.rawValue)"
+                    }
+                    if unwrappedActivity.running {
+                        self.motionDesc += " running, conf: \(unwrappedActivity.confidence.rawValue)"
+                    }
+                    if unwrappedActivity.unknown {
+                        self.motionDesc += " unknown, conf: \(unwrappedActivity.confidence.rawValue)"
+                    }
+                    if unwrappedActivity.stationary {
+                        self.motionDesc += " still, conf: \(unwrappedActivity.confidence.rawValue)"
+                    }
+                    if unwrappedActivity.cycling {
+                        self.motionDesc += " cycling, conf: \(unwrappedActivity.confidence.rawValue)"
+                    }
+                    if unwrappedActivity.automotive {
+                        self.motionDesc += " driving, conf: \(unwrappedActivity.confidence.rawValue)"
+                    }
+                    // MARK: 
+                    //Sometimes, the CMMotionActivity is none of above even lauched a while
+                    //it looks werid if displaying empty string, so I add "uncertainty" to describe this situation
+                    //CMMotionActivity @ 1588877.195945,<startDate,2021-10-11 17:31:40 +0000,confidence,2,unknown,0,stationary,0,walking,0,running,0,automotive,0,cycling,0>
+                    if self.motionDesc == "" {
+                        self.motionDesc = "uncertainty"
+                    }
                 }
             }
         }
@@ -60,7 +110,7 @@ class MotionModel {
             self.pedometer.startUpdates(from: Date().midnight) { (pedData:CMPedometerData?, error:Error?) in
                 if pedData != nil {
                     self.todaySteps = pedData!.numberOfSteps
-                    print("start pedometer update: \(pedData?.numberOfSteps)")
+                    print("start pedometer update: \(String(describing: pedData?.numberOfSteps))")
                 }
             }
         }
@@ -69,31 +119,7 @@ class MotionModel {
     // return a string description of current motion
     // return empty string if CMMotionActivityManager is inactive
     func getCurrentMotion() -> String {
-        var motionDesc:String = ""
-        if let act = self.activity {
-//            print(activity.description)
-            //{unknown, still, walking, running, cycling, driving}
-            if act.walking {
-                motionDesc += "walking, conf: \(act.confidence.rawValue)"
-            }
-            if act.running {
-                motionDesc += "running, conf: \(act.confidence.rawValue)"
-            }
-            if act.unknown {
-                motionDesc += "unknown, conf: \(act.confidence.rawValue)"
-            }
-            if act.stationary {
-                motionDesc += "still, conf: \(act.confidence.rawValue)"
-            }
-            if act.cycling {
-                motionDesc += "cycling, conf: \(act.confidence.rawValue)"
-            }
-            if act.automotive {
-                motionDesc += "driving, conf: \(act.confidence.rawValue)"
-            }
-        }
-//        print(motionDesc)
-        return motionDesc
+        return self.motionDesc
     }
     
     //stop activity updates
