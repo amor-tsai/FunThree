@@ -23,6 +23,14 @@ extension Date {
     }
 }
 
+// set extension name of notification
+extension Notification.Name {
+    static let didReceiveTodaySteps = Notification.Name("didReceiveTodaySteps")// today steps changed
+    static let didReceiveYesterdaySteps = Notification.Name("didReceiveYesterdaySteps") // yesterday steps changed
+    static let didReceiveDailyGoal = Notification.Name("didReceiveDailyGoal") // daily goal changed
+    static let didReceiveCurrentMotion = Notification.Name("didReceiveCurrentMotion") // current motion changed
+}
+
 class MotionModel {
     
     // MARK: Properties
@@ -32,10 +40,22 @@ class MotionModel {
     
     let DAILY_GOAL = "DailyGoal" // key to store daily goal
     
-    private var todaySteps:NSNumber
-    private var yesterdaySteps:NSNumber
+    private var todaySteps:Int {
+        didSet { // when value changed, send notification to observers
+            NotificationCenter.default.post(name: .didReceiveTodaySteps, object: nil)
+        }
+    }
+    private var yesterdaySteps:Int {
+        didSet { // when value changed, send notification to observers
+            NotificationCenter.default.post(name: .didReceiveYesterdaySteps, object: nil)
+        }
+    }
     private var motionDesc : String
-    private var dailyGoal : Int
+    private var dailyGoal : Int {
+        didSet { // when value changed, send notification to observers
+            NotificationCenter.default.post(name: .didReceiveDailyGoal, object: nil)
+        }
+    }
     
     private static let singleInstance: MotionModel = {
        let shared = MotionModel()
@@ -43,7 +63,7 @@ class MotionModel {
     }() // return single instance
     
     init() {
-        self.yesterdaySteps = 0
+        self.yesterdaySteps = MotionModel.initYesterdaySteps()
         self.todaySteps = 0
         self.motionDesc = ""
         self.dailyGoal = UserDefaults.standard.integer(forKey: DAILY_GOAL)// if daily goal does not set, 0 will be assigned.
@@ -99,6 +119,8 @@ class MotionModel {
                     if self.motionDesc == "" {
                         self.motionDesc = "uncertainty"
                     }
+                    
+                    NotificationCenter.default.post(name: .didReceiveCurrentMotion, object: nil)
                 }
             }
         }
@@ -109,7 +131,7 @@ class MotionModel {
         if CMPedometer.isStepCountingAvailable() {
             self.pedometer.startUpdates(from: Date().midnight) { (pedData:CMPedometerData?, error:Error?) in
                 if pedData != nil {
-                    self.todaySteps = pedData!.numberOfSteps
+                    self.todaySteps = Int(truncating: pedData!.numberOfSteps)
                     print("start pedometer update: \(String(describing: pedData?.numberOfSteps))")
                 }
             }
@@ -137,21 +159,66 @@ class MotionModel {
     }
     
     // get steps of yesterday
-    func getYesterdaySteps() -> NSNumber {
-        self.pedometer.queryPedometerData(from: Date().dayBefore, to: Date().midnight) {
-            (pedData: CMPedometerData?,error:Error?) -> Void in
-            if pedData?.numberOfSteps != nil {
-//                print("yesterday \(pedData?.numberOfSteps)")
-                self.yesterdaySteps = pedData!.numberOfSteps
-//                print(self.yesterdaySteps)
+    func getYesterdaySteps() -> Int {
+        if self.yesterdaySteps > 0 {
+            return self.yesterdaySteps
+        }
+        if CMPedometer.isStepCountingAvailable() {
+            self.pedometer.queryPedometerData(from: Date().dayBefore, to: Date().midnight) {
+                (pedData: CMPedometerData?,error:Error?) -> Void in
+                if pedData?.numberOfSteps != nil {
+                    self.yesterdaySteps = Int(truncating: pedData!.numberOfSteps)
+                } else {
+                    self.yesterdaySteps = 0
+                }
             }
         }
         return self.yesterdaySteps
     }
     
     // get steps of today
-    func getTodaySteps() -> NSNumber {
+    func getTodaySteps() -> Int {
         return self.todaySteps
     }
     
+    // get today's goal state description
+    // if goal achieved, then return "Well Done!"
+    // else return "Goal unreached"
+    func getTodayGoalStateDesc() -> String {
+        var goalDesc = ""
+        if self.dailyGoal <= self.todaySteps {
+            goalDesc = "Well Done!" // if goal is reached
+        } else {
+            goalDesc = "Goal unreached" // if goal is not reached
+        }
+        return goalDesc
+    }
+    
+    // get yesterday's goal state descrption
+    func getYesterdayGoalStateDesc() -> String {
+        var goalDesc = ""
+        if self.dailyGoal <= self.yesterdaySteps {
+            goalDesc = "Well Done!"
+        } else {
+            goalDesc = "Goal unreached"
+        }
+        return goalDesc
+    }
+    
+    // get yesterday steps
+    // since I need the property yesterdaySteps contained a value when it is initialized
+    private static func initYesterdaySteps() -> Int {
+        var yesterdaySteps: Int = 0
+        if CMPedometer.isStepCountingAvailable() {
+            CMPedometer().queryPedometerData(from: Date().dayBefore, to: Date().midnight) {
+                (pedData: CMPedometerData?,error:Error?) -> Void in
+                if pedData?.numberOfSteps != nil {
+                    yesterdaySteps = Int(truncating: pedData!.numberOfSteps)
+                } else {
+                    yesterdaySteps = 0
+                }
+            }
+        }
+        return yesterdaySteps
+    }
 }

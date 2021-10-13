@@ -20,6 +20,7 @@ class GoalViewController:UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        GoalNumTextField.text = "\(self.motion.getDailyGoal())"
         GoalNumTextField.delegate = self
         GoalNumTextField.keyboardType = .numberPad
         
@@ -34,6 +35,7 @@ class GoalViewController:UIViewController, UITextFieldDelegate {
     
     //set the goal and permanently store
     @IBAction func GoalConfirmTap(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
         motion.dailyGoalSet(dailyGoal: self.GoalNumTextField.text ?? "")
     }
     
