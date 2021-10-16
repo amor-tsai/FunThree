@@ -9,7 +9,7 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    let motion = {
+    let motionModel = {
         return MotionModel.sharedInstance()
     }()
     
@@ -20,6 +20,11 @@ class ViewController: UIViewController {
     @IBOutlet weak var YesterdayGoalStateLable: UILabel!
     
     @IBOutlet weak var GoalSetButton: UIButton!
+    @IBOutlet weak var DailyGameButton: UIButton!
+    
+    @IBAction func PressGameButton(_ sender: Any) {
+        print("press")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,8 +36,14 @@ class ViewController: UIViewController {
         GoalSetButton.layer.borderWidth = 1
         GoalSetButton.layer.borderColor = UIColor.black.cgColor
         
-        self.YesterdayStepsLable.text = "\(self.motion.getYesterdaySteps())"
-        self.YesterdayGoalStateLable.text = "\(self.motion.getYesterdayGoalStateDesc())"
+        DispatchQueue.main.async {
+            self.TodayStepsLable.text = "\(self.motionModel.getTodaySteps())"
+            self.TodayGoalStateLable.text = "\(self.motionModel.getTodayGoalStateDesc())"
+            self.YesterdayStepsLable.text = "\(self.motionModel.getYesterdaySteps())"
+            self.YesterdayGoalStateLable.text = "\(self.motionModel.getYesterdayGoalStateDesc())"
+        }
+        
+        DailyGameButton.isEnabled = self.motionModel.isYesterdayGoalReached()
         
         self.startActivityMonitoring()
         self.startPedometerMonitoring()
@@ -43,24 +54,25 @@ class ViewController: UIViewController {
         super.viewDidDisappear(animated)
         //Do any additional setup after view disappeared
         
-        motion.stopActivityUpdates()
-        motion.stopPedometerUpdates()
+        motionModel.stopActivityUpdates()
+        motionModel.stopPedometerUpdates()
     }
     
-    // MARK: =====Motion Methods=====
+    // MARK: =====Motion Model Methods=====
     func startActivityMonitoring(){
-        motion.startActivityUpdates()
+        motionModel.startActivityUpdates()
 //        Timer.scheduledTimer(
 //            timeInterval: 1/20.0,
 //            target: self,
 //            selector: #selector(self.updateMotionLable),
 //            userInfo: nil,
 //            repeats: true)
+        //here use NotificationCenter to update the lable.text
         NotificationCenter.default.addObserver(self, selector: #selector(onDidReceiveCurrentMotion(_:)), name: .didReceiveCurrentMotion, object: nil)
     }
     
     func startPedometerMonitoring(){
-        motion.startPedometerUpdates()
+        motionModel.startPedometerUpdates()
         NotificationCenter.default.addObserver(self, selector: #selector(onDidReceiveTodaySteps(_:)), name: .didReceiveTodaySteps, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onDidReceiveYesterdaySteps(_:)), name: .didReceiveYesterdaySteps, object: nil)
     }
@@ -72,41 +84,42 @@ class ViewController: UIViewController {
     
     @objc
     func updateMotionLable() {
-        self.CurrentMotionLable.text = "Current Motion: \(self.motion.getCurrentMotion())"
-        self.YesterdayStepsLable.text = "\(self.motion.getYesterdaySteps())"
-        self.TodayStepsLable.text = "\(self.motion.getTodaySteps())"
+        self.CurrentMotionLable.text = "Current Motion: \(self.motionModel.getCurrentMotion())"
+        self.YesterdayStepsLable.text = "\(self.motionModel.getYesterdaySteps())"
+        self.TodayStepsLable.text = "\(self.motionModel.getTodaySteps())"
     }
     
     @objc
     func onDidReceiveTodaySteps(_ notification: Notification) {
         DispatchQueue.main.async {
-            self.TodayStepsLable.text = "\(self.motion.getTodaySteps())"
-            self.TodayGoalStateLable.text = "\(self.motion.getTodayGoalStateDesc())"
+            self.TodayStepsLable.text = "\(self.motionModel.getTodaySteps())"
+            self.TodayGoalStateLable.text = "\(self.motionModel.getTodayGoalStateDesc())"
         }
     }
     
     @objc
     func onDidReceiveYesterdaySteps(_ notification: Notification) {
         DispatchQueue.main.async {
-            self.YesterdayStepsLable.text = "\(self.motion.getYesterdaySteps())"
-            self.YesterdayGoalStateLable.text = "\(self.motion.getYesterdayGoalStateDesc())"
+            self.YesterdayStepsLable.text = "\(self.motionModel.getYesterdaySteps())"
+            self.YesterdayGoalStateLable.text = "\(self.motionModel.getYesterdayGoalStateDesc())"
         }
     }
     
     @objc
     func onDidReceiveDailyGoal(_ notification: Notification) {
         print("daily goal changed \(notification)")
-        print("\(self.motion.getYesterdayGoalStateDesc())")
+        print("\(self.motionModel.getYesterdayGoalStateDesc())")
+        DailyGameButton.isEnabled = self.motionModel.isYesterdayGoalReached()
         DispatchQueue.main.async {
-            self.YesterdayGoalStateLable.text = "\(self.motion.getYesterdayGoalStateDesc())"
-            self.TodayGoalStateLable.text = "\(self.motion.getTodayGoalStateDesc())"
+            self.YesterdayGoalStateLable.text = "\(self.motionModel.getYesterdayGoalStateDesc())"
+            self.TodayGoalStateLable.text = "\(self.motionModel.getTodayGoalStateDesc())"
         }
     }
     
     @objc
     func onDidReceiveCurrentMotion(_ notification: Notification) {
         DispatchQueue.main.async {
-            self.CurrentMotionLable.text = "Current Motion: \(self.motion.getCurrentMotion())"
+            self.CurrentMotionLable.text = "Current Motion: \(self.motionModel.getCurrentMotion())"
         }
     }
 }

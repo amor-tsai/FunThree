@@ -39,6 +39,8 @@ class MotionModel {
     let customQueue = OperationQueue()
     
     let DAILY_GOAL = "DailyGoal" // key to store daily goal
+    let YESTERDAY_MARK = "YesterDayMark"
+    let CURRENCY = "StepsToCurrency"
     
     private var todaySteps:Int {
         didSet { // when value changed, send notification to observers
@@ -56,17 +58,22 @@ class MotionModel {
             NotificationCenter.default.post(name: .didReceiveDailyGoal, object: nil)
         }
     }
+    private var currency : Int
     
     private static let singleInstance: MotionModel = {
        let shared = MotionModel()
         return shared
     }() // return single instance
     
+    
     init() {
         self.yesterdaySteps = MotionModel.initYesterdaySteps()
         self.todaySteps = 0
         self.motionDesc = ""
         self.dailyGoal = UserDefaults.standard.integer(forKey: DAILY_GOAL)// if daily goal does not set, 0 will be assigned.
+        
+        // if meet the goal of yesterday, then currency equals to the 10% of yesterday steps
+        self.currency = 0
     }
     
     class func sharedInstance() -> MotionModel {
@@ -76,7 +83,6 @@ class MotionModel {
     
     // set daily goal and store the value
     func dailyGoalSet(dailyGoal:String) {
-        
         self.dailyGoal = Int(dailyGoal) ?? 0
         UserDefaults.standard.set(self.dailyGoal, forKey: DAILY_GOAL)
     }
@@ -205,6 +211,44 @@ class MotionModel {
         return goalDesc
     }
     
+    //whether yesterday's steps meet the daily goal, return true if yes
+    //return false if not
+    func isYesterdayGoalReached() -> Bool {
+        var isReached = false
+        if self.yesterdaySteps >= self.dailyGoal {
+            isReached = true
+        }
+        return isReached
+    }
+    
+    // update currency, return true if successfully
+    func updateCurrency(number:Int) -> Bool {
+        if self.currency + number >= 0 {
+            self.currency += number
+            UserDefaults.standard.set(self.currency, forKey: CURRENCY)
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func getCurrency() -> Int {
+        return self.currency
+    }
+    
+    // set up currency
+    func setUpCurrency() {
+        let yesterdayMark = UserDefaults.standard.string(forKey: YESTERDAY_MARK)
+        if yesterdayMark == nil || yesterdayMark != Date().dayBefore.description(with: .current) {
+            self.currency = yesterdaySteps/10
+            UserDefaults.standard.set(yesterdayMark, forKey: YESTERDAY_MARK)
+            UserDefaults.standard.set(self.currency, forKey: CURRENCY)
+        } else {
+            self.currency = UserDefaults.standard.integer(forKey: CURRENCY)
+        }
+        print(self.currency)
+    }
+    
     // get yesterday steps
     // since I need the property yesterdaySteps contained a value when it is initialized
     private static func initYesterdaySteps() -> Int {
@@ -214,11 +258,13 @@ class MotionModel {
                 (pedData: CMPedometerData?,error:Error?) -> Void in
                 if pedData?.numberOfSteps != nil {
                     yesterdaySteps = Int(truncating: pedData!.numberOfSteps)
+                    print("pedData yesterdaySteps \(yesterdaySteps) \(pedData!.numberOfSteps)")
                 } else {
                     yesterdaySteps = 0
                 }
             }
         }
+        print(yesterdaySteps)
         return yesterdaySteps
     }
 }
