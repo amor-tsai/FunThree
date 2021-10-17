@@ -41,9 +41,11 @@ class ViewController: UIViewController {
             self.TodayGoalStateLable.text = "\(self.motionModel.getTodayGoalStateDesc())"
             self.YesterdayStepsLable.text = "\(self.motionModel.getYesterdaySteps())"
             self.YesterdayGoalStateLable.text = "\(self.motionModel.getYesterdayGoalStateDesc())"
+            
+            self.DailyGameButton.isEnabled = self.motionModel.isYesterdayGoalReached()
         }
         
-        DailyGameButton.isEnabled = self.motionModel.isYesterdayGoalReached()
+        
         
         self.startActivityMonitoring()
         self.startPedometerMonitoring()
@@ -89,24 +91,25 @@ class ViewController: UIViewController {
         self.TodayStepsLable.text = "\(self.motionModel.getTodaySteps())"
     }
     
-    @objc
-    func onDidReceiveTodaySteps(_ notification: Notification) {
+    //when receive the notification of today steps
+    @objc func onDidReceiveTodaySteps(_ notification: Notification) {
         DispatchQueue.main.async {
             self.TodayStepsLable.text = "\(self.motionModel.getTodaySteps())"
             self.TodayGoalStateLable.text = "\(self.motionModel.getTodayGoalStateDesc())"
         }
     }
     
-    @objc
-    func onDidReceiveYesterdaySteps(_ notification: Notification) {
+    //when receive the nofitication of yesterday steps
+    @objc func onDidReceiveYesterdaySteps(_ notification: Notification) {
         DispatchQueue.main.async {
             self.YesterdayStepsLable.text = "\(self.motionModel.getYesterdaySteps())"
             self.YesterdayGoalStateLable.text = "\(self.motionModel.getYesterdayGoalStateDesc())"
+            self.DailyGameButton.isEnabled = self.motionModel.isYesterdayGoalReached()
         }
     }
     
-    @objc
-    func onDidReceiveDailyGoal(_ notification: Notification) {
+    //when receive the notification of daily goal
+    @objc func onDidReceiveDailyGoal(_ notification: Notification) {
         print("daily goal changed \(notification)")
         print("\(self.motionModel.getYesterdayGoalStateDesc())")
         DailyGameButton.isEnabled = self.motionModel.isYesterdayGoalReached()
@@ -116,8 +119,8 @@ class ViewController: UIViewController {
         }
     }
     
-    @objc
-    func onDidReceiveCurrentMotion(_ notification: Notification) {
+    // when receive the nofitication of current motion activity
+    @objc func onDidReceiveCurrentMotion(_ notification: Notification) {
         DispatchQueue.main.async {
             self.CurrentMotionLable.text = "Current Motion: \(self.motionModel.getCurrentMotion())"
         }

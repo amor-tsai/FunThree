@@ -35,13 +35,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.physicsWorld.gravity = CGVector(dx: CGFloat(9.8*gravity.x), dy: CGFloat(9.8*gravity.y))
 //            self.physicsWorld.gravity = CGVector(dx: CGFloat(9.8*gravity.x), dy: 0)
             
-            if (spinBlock.position.x <= spinBlock.size.width/2 && gravity.x < 0) || (spinBlock.position.x >= self.size.width-spinBlock.size.width/2 && gravity.x > 0) {
-                return
-            } else {
+//            if (spinBlock.position.x <= spinBlock.size.width/2 && gravity.x < 0) || (spinBlock.position.x >= self.size.width-spinBlock.size.width/2 && gravity.x > 0) {
+//                return
+//            } else {
 //                print("spinblock size: \(spinBlock.size.width)  pos: \(spinBlock.position.x) grax: \(gravity.x) gray: \(gravity.y) ")
-                let action = SKAction.moveBy(x: gravity.x * 200, y: 0, duration: 0.5)
-                spinBlock.run(action)
-            }
+            let action = SKAction.moveBy(x: gravity.x * 200, y: 0, duration: 0.5)
+            spinBlock.run(action)
+//            }
         }
         
     }
