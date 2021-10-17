@@ -166,10 +166,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         spinBlock.physicsBody?.contactTestBitMask = 0x00000001
         spinBlock.physicsBody?.collisionBitMask = 0x00000001
         spinBlock.physicsBody?.categoryBitMask = 0x00000001
-        spinBlock.physicsBody?.isDynamic = false
+        spinBlock.physicsBody?.isDynamic = true
         spinBlock.physicsBody?.affectedByGravity = false
 //        spinBlock.physicsBody?.pinned = true
         spinBlock.physicsBody?.allowsRotation = true
+        spinBlock.physicsBody?.angularDamping = 0.4
+        spinBlock.physicsBody?.mass = 100 // so the picachu would not crush the hat to fall down
         spinBlock.physicsBody?.restitution = random(min: CGFloat(0.5), max: CGFloat(2.7))
 //        spinBlock.constraints = [SKConstraint.positionY(SKRange(constantValue: spinBlock.position.y))]
         
