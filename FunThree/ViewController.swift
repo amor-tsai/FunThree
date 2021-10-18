@@ -45,12 +45,36 @@ class ViewController: UIViewController {
             self.DailyGameButton.isEnabled = self.motionModel.isYesterdayGoalReached()
         }
         
-        
-        
         self.startActivityMonitoring()
         self.startPedometerMonitoring()
         self.startDailyGoalMonitoring()
     }
+    
+//    // when the view turn to goalView and then turn back, the view does not refresh the interface
+//    // so I have to set this function to make the view continuesly refresh the interface
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(true)
+//
+//        GoalSetButton.backgroundColor = .clear
+//        GoalSetButton.setTitleColor(UIColor.black, for: .normal)
+//        GoalSetButton.layer.cornerRadius = 5
+//        GoalSetButton.layer.borderWidth = 1
+//        GoalSetButton.layer.borderColor = UIColor.black.cgColor
+//
+//        DispatchQueue.main.async {
+//            self.TodayStepsLable.text = "\(self.motionModel.getTodaySteps())"
+//            self.TodayGoalStateLable.text = "\(self.motionModel.getTodayGoalStateDesc())"
+//            self.YesterdayStepsLable.text = "\(self.motionModel.getYesterdaySteps())"
+//            self.YesterdayGoalStateLable.text = "\(self.motionModel.getYesterdayGoalStateDesc())"
+//
+//            self.DailyGameButton.isEnabled = self.motionModel.isYesterdayGoalReached()
+//        }
+//
+//        self.startActivityMonitoring()
+//        self.startPedometerMonitoring()
+//        self.startDailyGoalMonitoring()
+//
+//    }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
