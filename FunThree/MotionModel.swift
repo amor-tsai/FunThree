@@ -239,7 +239,7 @@ class MotionModel {
     // set up currency
     func setUpCurrency() {
         let yesterdayMark = UserDefaults.standard.string(forKey: YESTERDAY_MARK)
-        print("yesterdayMark \(yesterdayMark)")
+//        print("yesterdayMark \(yesterdayMark)")
         if yesterdayMark == nil || yesterdayMark != Date().dayBefore.description(with: .current) {
             self.currency = yesterdaySteps/10
             UserDefaults.standard.set(Date().dayBefore.description(with: .current), forKey: YESTERDAY_MARK)
