@@ -43,6 +43,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             spinBlock.run(action)
 //            }
         }
+        //make ball rotated by gyroscope, so the game is more difficult
+        if let rotationRate = motionData?.rotationRate {
+            let action = SKAction.rotate(byAngle: rotationRate.y*3, duration: 0.5)
+            block.run(action)
+        }
         
     }
     
@@ -65,7 +70,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        self.addStaticBlockAtPoint(CGPoint(x: size.width * 0.2, y: size.height * 0.25))
 //        self.addStaticBlockAtPoint(CGPoint(x: size.width * 0.3, y: size.height * 0.7))
 //        self.addStaticBlockAtPoint(CGPoint(x: size.width * 0.4, y: size.height * 0.25))
-        self.addStaticBlockAtPoint(CGPoint(x: size.width * 0.5, y: size.height * 0.8))
+        self.addStaticBlockAtPoint(CGPoint(x: size.width * 0.5, y: size.height * 0.6))
 //        self.addStaticBlockAtPoint(CGPoint(x: size.width * 0.6, y: size.height * 0.7))
 //        self.addStaticBlockAtPoint(CGPoint(x: size.width * 0.7, y: size.height * 0.25))
         
@@ -87,6 +92,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // MARK: Create Sprites Functions
     let spinBlock = SKSpriteNode(imageNamed: "hat")
+    let block = SKSpriteNode(imageNamed: "ball")
     let scoreLabel = SKLabelNode(fontNamed: "Arial")
     let currencyLable = SKLabelNode(fontNamed: "Arial")
     var score:Int = 0 {
@@ -172,7 +178,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         spinBlock.physicsBody?.allowsRotation = true
         spinBlock.physicsBody?.angularDamping = 0.4
         spinBlock.physicsBody?.mass = 100 // so the picachu would not crush the hat to fall down
-        spinBlock.physicsBody?.restitution = random(min: CGFloat(0.5), max: CGFloat(2.7))
+        spinBlock.physicsBody?.restitution = random(min: CGFloat(0.5), max: CGFloat(3.5))
 //        spinBlock.constraints = [SKConstraint.positionY(SKRange(constantValue: spinBlock.position.y))]
         
         
@@ -181,8 +187,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func addStaticBlockAtPoint(_ point:CGPoint){
-        
-        let block = SKSpriteNode(imageNamed: "ball")
         
         block.color = UIColor.green
         block.size = CGSize(width:size.width*0.16,height:size.height * 0.08)
